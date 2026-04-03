@@ -1,0 +1,171 @@
+{% extends 'base.html' %}
+{% block content %}
+
+<!-- Page header -->
+<div class="fade-up" style="display:flex;justify-content:space-between;align-items:flex-end;
+     margin-bottom:2rem;flex-wrap:wrap;gap:12px">
+  <div>
+    <div style="display:inline-flex;align-items:center;gap:7px;background:var(--primary-lt);
+                border:1px solid #c7d2fe;border-radius:99px;padding:4px 12px 4px 8px;margin-bottom:10px">
+      <span style="width:7px;height:7px;border-radius:50%;background:var(--primary);
+                   box-shadow:0 0 0 3px rgba(99,102,241,.2);display:inline-block;
+                   animation:pulse-dot 2s infinite"></span>
+      <span style="font-family:var(--mono);font-size:10px;color:var(--primary);
+                   font-weight:600;letter-spacing:.5px">SYSTEM ONLINE</span>
+    </div>
+    <h1 style="font-size:2rem;font-weight:800;color:var(--text);letter-spacing:-.5px;line-height:1.1">
+      Control Center
+    </h1>
+    <p style="color:var(--muted);font-size:14px;margin-top:6px">
+      Manage AI models, student registry, and attendance tracking
+    </p>
+  </div>
+  <div style="text-align:right">
+    <div id="clock" style="font-family:var(--mono);font-size:1.2rem;font-weight:500;color:var(--text)"></div>
+    <div id="dateline" style="font-size:12px;color:var(--muted);margin-top:2px"></div>
+  </div>
+</div>
+
+<!-- ── Stat row ── -->
+<div style="display:grid;grid-template-columns:repeat(3,1fr);gap:16px;margin-bottom:20px">
+
+  <!-- Students -->
+  <div class="card fade-up d1" style="margin-bottom:0;padding:20px 22px;
+       border-left:3px solid var(--primary);overflow:hidden;position:relative">
+    <div style="position:absolute;top:-20px;right:-20px;width:100px;height:100px;
+                border-radius:50%;background:var(--primary-lt);opacity:.5;pointer-events:none"></div>
+    <div style="display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:10px">
+      <span class="section-heading" style="margin:0;border:none">Students</span>
+      <div style="width:36px;height:36px;border-radius:10px;background:var(--primary-lt);
+                  display:flex;align-items:center;justify-content:center;flex-shrink:0">
+        <i class="fas fa-users" style="color:var(--primary);font-size:15px"></i>
+      </div>
+    </div>
+    <div style="font-size:2.6rem;font-weight:800;color:var(--text);line-height:1;
+                font-family:var(--mono)" data-count="{{ student_count }}">{{ student_count }}</div>
+    <div style="font-size:12px;color:var(--muted);margin-top:5px">Registered faces</div>
+  </div>
+
+  <!-- Model -->
+  <div class="card fade-up d2" style="margin-bottom:0;padding:20px 22px;
+       border-left:3px solid {% if model_ready %}var(--success){% else %}var(--danger){% endif %};
+       overflow:hidden;position:relative">
+    <div style="position:absolute;top:-20px;right:-20px;width:100px;height:100px;
+                border-radius:50%;background:{% if model_ready %}var(--success-lt){% else %}var(--danger-lt){% endif %};
+                opacity:.5;pointer-events:none"></div>
+    <div style="display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:10px">
+      <span class="section-heading" style="margin:0;border:none">Model</span>
+      <div style="width:36px;height:36px;border-radius:10px;
+                  background:{% if model_ready %}var(--success-lt){% else %}var(--danger-lt){% endif %};
+                  display:flex;align-items:center;justify-content:center;flex-shrink:0">
+        <i class="fas fa-brain" style="color:{% if model_ready %}var(--success){% else %}var(--danger){% endif %};font-size:15px"></i>
+      </div>
+    </div>
+    <div style="font-size:2.6rem;font-weight:800;line-height:1;font-family:var(--mono);
+                color:{% if model_ready %}var(--success){% else %}var(--danger){% endif %}">
+      {% if model_ready %}RDY{% else %}---{% endif %}
+    </div>
+    <div style="font-size:12px;color:var(--muted);margin-top:5px">
+      {% if model_ready %}LBPH trained & ready{% else %}Not trained yet{% endif %}
+    </div>
+  </div>
+
+  <!-- Engine -->
+  <div class="card fade-up d3" style="margin-bottom:0;padding:20px 22px;
+       border-left:3px solid #06b6d4;overflow:hidden;position:relative">
+    <div style="position:absolute;top:-20px;right:-20px;width:100px;height:100px;
+                border-radius:50%;background:#ecfeff;opacity:.5;pointer-events:none"></div>
+    <div style="display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:10px">
+      <span class="section-heading" style="margin:0;border:none">Engine</span>
+      <div style="width:36px;height:36px;border-radius:10px;background:#ecfeff;
+                  display:flex;align-items:center;justify-content:center;flex-shrink:0">
+        <i class="fas fa-microchip" style="color:#06b6d4;font-size:15px"></i>
+      </div>
+    </div>
+    <div style="font-size:2.6rem;font-weight:800;color:#0e7490;line-height:1;font-family:var(--mono)">YOLOv8</div>
+    <div style="font-size:12px;color:var(--muted);margin-top:5px">Vision backbone · COCO</div>
+  </div>
+
+</div>
+
+<!-- ── Main content ── -->
+<div style="display:grid;grid-template-columns:1fr;gap:18px;margin-bottom:18px">
+
+  <!-- Behavior Alerts (if any) -->
+  {% if behavior_alerts %}
+  <div class="card fade-up d3" style="margin-bottom:0;padding:0;overflow:hidden">
+    <div style="padding:13px 18px;background:var(--surface2);border-bottom:1px solid var(--border)">
+      <div class="card-title" style="margin:0"><i class="fas fa-bell"></i> Behavior Alerts</div>
+    </div>
+    <div style="padding:14px 16px;display:flex;flex-direction:column;gap:10px">
+      {% for alert in behavior_alerts %}
+      <div style="padding:12px 14px;border-radius:9px;border-left:4px solid 
+                  {% if alert.severity == 'danger' %}var(--danger){% else %}var(--warning){% endif %};
+                  background:{% if alert.severity == 'danger' %}var(--danger-lt){% else %}var(--warning-lt){% endif %}">
+        <div style="font-size:13px;font-weight:600;
+                    color:{% if alert.severity == 'danger' %}#991b1b{% else %}#92400e{% endif %};
+                    display:flex;justify-content:space-between;align-items:center">
+          {% if alert.type == 'phone' %}
+            <span><i class="fas fa-mobile-alt"></i> {{ alert.message }}</span>
+          {% else %}
+            <span><i class="fas fa-brain"></i> {{ alert.message }}</span>
+          {% endif %}
+          <span style="font-size:1.2rem;font-weight:800">{{ alert.count }}</span>
+        </div>
+      </div>
+      {% endfor %}
+    </div>
+  </div>
+  {% endif %}
+
+</div>
+
+<!-- ── Activity log ── -->
+<div class="card fade-up d5" style="padding:0;overflow:hidden">
+  <div style="display:flex;align-items:center;gap:8px;padding:13px 18px;
+              border-bottom:1px solid var(--border);background:var(--surface2)">
+    <div style="display:flex;gap:5px">
+      <div style="width:10px;height:10px;border-radius:50%;background:#ef4444;opacity:.8"></div>
+      <div style="width:10px;height:10px;border-radius:50%;background:#f59e0b;opacity:.8"></div>
+      <div style="width:10px;height:10px;border-radius:50%;background:#10b981;opacity:.8"></div>
+    </div>
+    <span style="font-family:var(--mono);font-size:10px;color:var(--muted);margin-left:6px">
+      eduvision.log — system activity
+    </span>
+  </div>
+  <div id="logWrap" style="padding:14px 20px;font-family:var(--mono);font-size:12px;
+                            line-height:2;min-height:78px;background:#fafbff"></div>
+</div>
+
+<script>
+  // Clock
+  function tick() {
+    const n = new Date();
+    document.getElementById('clock').textContent =
+      n.toLocaleTimeString('en-IN',{hour:'2-digit',minute:'2-digit',second:'2-digit'});
+    document.getElementById('dateline').textContent =
+      n.toLocaleDateString('en-IN',{weekday:'short',day:'numeric',month:'short',year:'numeric'});
+  }
+  tick(); setInterval(tick, 1000);
+
+  // Boot log
+  const log = document.getElementById('logWrap');
+  const entries = [
+    { t:120,  c:'#10b981', txt:'[INIT]  EduVision AI system starting up...' },
+    { t:600,  c:'#6366f1', txt:'[YOLO]  yolov8n.pt loaded — 80 COCO classes ready' },
+    { t:1100, c:'{% if model_ready %}#10b981{% else %}#ef4444{% endif %}',
+      txt:'{% if model_ready %}[LBPH]  Face model loaded — {{ student_count }} student(s) enrolled{% else %}[WARN]  Face model not found — please train first{% endif %}' },
+    { t:1600, c:'#64748b', txt:'[SYS ]  OpenCV backend · CAP_AVFOUNDATION' },
+    { t:2100, c:'#64748b', txt:'[SYS ]  Django HTTP server running on :8000' },
+    { t:2600, c:'#10b981', txt:'[OK  ]  All systems nominal — awaiting commands' },
+  ];
+  entries.forEach(({t,c,txt}) => setTimeout(() => {
+    const d = document.createElement('div');
+    d.innerHTML = `<span style="color:${c}">${txt}</span>`;
+    d.style.animation = 'fadeUp .3s ease';
+    log.appendChild(d);
+    log.scrollTop = log.scrollHeight;
+  }, t));
+</script>
+
+{% endblock %}

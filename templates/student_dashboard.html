@@ -1,0 +1,142 @@
+{% extends 'base.html' %}
+{% load static %}
+{% block content %}
+
+<div class="fade-up" style="display:flex;justify-content:space-between;align-items:flex-end;margin-bottom:2rem;flex-wrap:wrap;gap:12px">
+  <div>
+    <div style="font-family:var(--mono);font-size:10px;color:var(--muted);letter-spacing:1.5px;text-transform:uppercase;margin-bottom:6px">Student Portal</div>
+    <h1 style="font-size:2rem;font-weight:800;color:var(--text);letter-spacing:-.5px">My Dashboard</h1>
+    <p style="color:var(--muted);font-size:14px;margin-top:4px">
+      Welcome, <strong>{{ request.user.get_full_name|default:request.user.username }}</strong>
+    </p>
+  </div>
+
+  <!-- Capture button -->
+  <form method="post" action="{% url 'student_capture' %}" id="captureForm">
+    {% csrf_token %}
+    <button type="submit" id="captureBtn"
+      style="display:inline-flex;align-items:center;gap:8px;padding:11px 20px;
+             background:var(--primary);color:#fff;border:none;border-radius:10px;
+             font-size:14px;font-weight:700;font-family:var(--sans);cursor:pointer;
+             transition:all .18s;box-shadow:0 2px 8px rgba(99,102,241,.3);margin-right:10px">
+      <i class="fas fa-camera"></i> Capture My Face
+    </button>
+  </form>
+
+  <!-- Train Model button -->
+  <form method="post" action="{% url 'retrain' %}" id="trainForm" style="display:inline">
+    {% csrf_token %}
+    <button type="submit" id="trainBtn"
+      style="display:inline-flex;align-items:center;gap:8px;padding:11px 20px;
+             background:var(--success);color:#fff;border:none;border-radius:10px;
+             font-size:14px;font-weight:700;font-family:var(--sans);cursor:pointer;
+             transition:all .18s;box-shadow:0 2px 8px rgba(16,185,129,.3)">
+      <i class="fas fa-brain"></i> Train Model
+    </button>
+  </form>
+</div>
+
+<!-- Notice if no student record yet -->
+{% if not student %}
+<div class="card fade-up d1" style="border-left:3px solid var(--warning);background:var(--warning-lt);border-color:#fde68a;margin-bottom:18px;padding:16px 20px">
+  <div style="display:flex;align-items:center;gap:12px">
+    <i class="fas fa-exclamation-triangle" style="color:var(--warning);font-size:18px;flex-shrink:0"></i>
+    <div>
+      <div style="font-weight:700;font-size:14px;color:#92400e">Face not registered yet</div>
+      <div style="font-size:13px;color:#b45309;margin-top:2px">
+        Click <strong>Capture My Face</strong> above to register your face for attendance. A camera window will open on the server.
+      </div>
+    </div>
+  </div>
+</div>
+{% endif %}
+
+<!-- Summary cards -->
+<div style="display:grid;grid-template-columns:repeat(3,1fr);gap:16px;margin-bottom:20px">
+  <div class="card fade-up d1" style="margin-bottom:0;padding:20px 22px;border-left:3px solid var(--primary)">
+    <div style="font-size:2.4rem;font-weight:800;color:var(--text);font-family:var(--mono)" data-count="{{ total_classes }}">{{ total_classes }}</div>
+    <div style="font-size:12px;color:var(--muted);margin-top:4px">Total sessions</div>
+  </div>
+  <div class="card fade-up d2" style="margin-bottom:0;padding:20px 22px;border-left:3px solid var(--success)">
+    <div style="font-size:2.4rem;font-weight:800;color:var(--success);font-family:var(--mono)" data-count="{{ present_count }}">{{ present_count }}</div>
+    <div style="font-size:12px;color:var(--muted);margin-top:4px">Present</div>
+  </div>
+  <div class="card fade-up d3" style="margin-bottom:0;padding:20px 22px;
+       border-left:3px solid {% if attendance_pct >= 75 %}var(--success){% else %}var(--danger){% endif %}">
+    <div style="font-size:2.4rem;font-weight:800;font-family:var(--mono);
+                color:{% if attendance_pct >= 75 %}var(--success){% else %}var(--danger){% endif %}">
+      {{ attendance_pct }}%
+    </div>
+    <div style="font-size:12px;color:var(--muted);margin-top:4px">
+      Attendance
+      {% if attendance_pct > 0 and attendance_pct < 75 %}
+        <span style="color:var(--danger);font-weight:600">&nbsp;· below 75%</span>
+      {% endif %}
+    </div>
+  </div>
+</div>
+
+<!-- How capture works -->
+<div class="card fade-up d3" style="margin-bottom:20px;border-left:3px solid var(--primary)">
+  <div class="card-title"><i class="fas fa-camera"></i> How Face Capture Works</div>
+  <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:16px">
+    <div style="display:flex;gap:10px;align-items:flex-start">
+      <div style="width:28px;height:28px;border-radius:8px;background:var(--primary-lt);color:var(--primary);display:flex;align-items:center;justify-content:center;font-family:var(--mono);font-size:11px;font-weight:700;flex-shrink:0">1</div>
+      <p style="font-size:13px;color:var(--muted);line-height:1.5;padding-top:4px">Click <strong style="color:var(--text)">Capture My Face</strong> button above</p>
+    </div>
+    <div style="display:flex;gap:10px;align-items:flex-start">
+      <div style="width:28px;height:28px;border-radius:8px;background:var(--primary-lt);color:var(--primary);display:flex;align-items:center;justify-content:center;font-family:var(--mono);font-size:11px;font-weight:700;flex-shrink:0">2</div>
+      <p style="font-size:13px;color:var(--muted);line-height:1.5;padding-top:4px">A <strong style="color:var(--text)">camera window</strong> opens on the server — look at it naturally</p>
+    </div>
+    <div style="display:flex;gap:10px;align-items:flex-start">
+      <div style="width:28px;height:28px;border-radius:8px;background:var(--primary-lt);color:var(--primary);display:flex;align-items:center;justify-content:center;font-family:var(--mono);font-size:11px;font-weight:700;flex-shrink:0">3</div>
+      <p style="font-size:13px;color:var(--muted);line-height:1.5;padding-top:4px">Photos saved automatically. Teacher will <strong style="color:var(--text)">retrain</strong> the model to activate you.</p>
+    </div>
+  </div>
+</div>
+
+<!-- Attendance records -->
+{% if records %}
+<div class="card fade-up d4" style="padding:0;overflow:hidden">
+  <div style="padding:13px 20px;border-bottom:1px solid var(--border);background:var(--surface2);display:flex;justify-content:space-between;align-items:center">
+    <div class="card-title" style="margin:0"><i class="fas fa-history"></i> Attendance History</div>
+    <span style="font-family:var(--mono);font-size:10px;color:var(--muted2)">{{ records|length }} records</span>
+  </div>
+  <table>
+    <thead>
+      <tr><th>Date</th><th>Time</th><th>Subject</th><th>Status</th></tr>
+    </thead>
+    <tbody>
+      {% for r in records %}
+      <tr>
+        <td style="font-family:var(--mono);font-size:12px;color:var(--muted)">{{ r.date }}</td>
+        <td style="font-family:var(--mono);font-size:12px;color:var(--muted)">{{ r.time }}</td>
+        <td style="font-size:13px">{{ r.subject|default:"General" }}</td>
+        <td>
+          <span class="pill {% if r.status == 'Present' %}pill-green{% else %}pill-red{% endif %}">
+            <i class="fas {% if r.status == 'Present' %}fa-check{% else %}fa-times{% endif %}"></i>
+            {{ r.status }}
+          </span>
+        </td>
+      </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+</div>
+
+{% else %}
+<div class="card fade-up d4" style="text-align:center;padding:50px;border:1.5px dashed var(--border2)">
+  <i class="fas fa-calendar-times" style="font-size:28px;color:var(--muted2);opacity:.4;margin-bottom:12px;display:block"></i>
+  <p style="font-size:14px;font-weight:600;color:var(--muted)">No attendance records yet</p>
+  <p style="font-size:13px;color:var(--muted2);margin-top:4px">Your teacher will run a scan to mark you present</p>
+</div>
+{% endif %}
+
+<script>
+  document.getElementById('captureForm').addEventListener('submit', function() {
+    const b = document.getElementById('captureBtn');
+    b.disabled = true;
+    b.innerHTML = '<span style="display:inline-block;width:14px;height:14px;border:2px solid rgba(255,255,255,.4);border-top-color:#fff;border-radius:50%;animation:spin .6s linear infinite"></span> Launching camera…';
+  });
+</script>
+{% endblock %}

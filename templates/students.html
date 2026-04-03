@@ -1,0 +1,121 @@
+{% extends 'base.html' %}
+{% block content %}
+
+<div class="fade-up" style="display:flex;justify-content:space-between;align-items:flex-end;
+     margin-bottom:2rem;flex-wrap:wrap;gap:12px">
+  <div>
+    <div style="font-family:var(--mono);font-size:10px;color:var(--muted);letter-spacing:1.5px;
+                text-transform:uppercase;margin-bottom:6px">Registry</div>
+    <h1 style="font-size:2rem;font-weight:800;color:var(--text);letter-spacing:-.5px">Student Database</h1>
+    <p style="color:var(--muted);font-size:14px;margin-top:4px">
+      {{ students|length }} enrolled &nbsp;·&nbsp; LBPH facial profiles
+    </p>
+  </div>
+  <a href="/" class="btn btn-primary fade-up d1"><i class="fas fa-plus"></i> Add Student</a>
+</div>
+
+<!-- Search -->
+<div class="card fade-up d1" style="padding:11px 16px;margin-bottom:16px;
+     display:flex;gap:12px;align-items:center;border-color:var(--border)">
+  <i class="fas fa-search" style="color:var(--muted2);font-size:13px;flex-shrink:0"></i>
+  <input type="text" id="searchInput" placeholder="Search students by name..."
+    style="margin:0;border:none;background:transparent;padding:4px 0;font-size:14px;
+           flex:1;box-shadow:none;color:var(--text)">
+</div>
+
+
+<!-- Table card -->
+<div class="card fade-up d2" style="padding:0;overflow:hidden">
+  {% if students %}
+  <table id="studentTable">
+    <thead>
+      <tr>
+        <th>UID</th>
+        <th>Student</th>
+        <th>Training Data</th>
+        <th>Status</th>
+        <th style="text-align:right;padding-right:18px">Actions</th>
+      </tr>
+    </thead>
+    <tbody>
+      {% for s in students %}
+      <tr style="animation:fadeUp .4s ease {{ forloop.counter0 }}00ms both">
+        <td>
+          <span style="font-family:var(--mono);font-size:11px;color:var(--muted2)">#{{ forloop.counter|stringformat:"03d" }}</span>
+        </td>
+        <td>
+          <div style="display:flex;align-items:center;gap:12px">
+            <div style="width:36px;height:36px;border-radius:10px;
+                        background:linear-gradient(135deg,var(--primary-lt),#ede9fe);
+                        border:1px solid #c7d2fe;
+                        display:flex;align-items:center;justify-content:center;
+                        font-weight:700;font-size:14px;color:var(--primary);flex-shrink:0">
+              {{ s.name|slice:":1"|upper }}
+            </div>
+            <div>
+              <div style="font-weight:600;color:var(--text);font-size:14px">{{ s.name }}</div>
+              <div style="font-size:11px;color:var(--muted2);font-family:var(--mono)">face · lbph</div>
+            </div>
+          </div>
+        </td>
+        <td>
+          <div style="display:flex;align-items:center;gap:10px">
+            <div style="flex:1;background:var(--border);height:5px;border-radius:10px;
+                        max-width:80px;overflow:hidden">
+              <div class="bar-anim"
+                   style="width:{% if s.photos >= 40 %}100{% elif s.photos >= 30 %}80{% elif s.photos >= 20 %}55{% else %}28{% endif %}%;
+                          height:100%;border-radius:10px;animation-delay:.3s;
+                          background:{% if s.photos >= 20 %}linear-gradient(90deg,var(--primary),#818cf8){% else %}var(--warning){% endif %}"></div>
+            </div>
+            <span style="font-size:11.5px;color:var(--muted);white-space:nowrap">{{ s.photos }} photos</span>
+          </div>
+        </td>
+        <td>
+          {% if s.photos >= 20 %}
+            <span class="pill pill-green"><i class="fas fa-check-circle"></i> Ready</span>
+          {% else %}
+            <span class="pill pill-amber"><i class="fas fa-clock"></i> Need more</span>
+          {% endif %}
+        </td>
+        <td style="text-align:right;padding-right:14px">
+          <button type="button"
+            onclick="confirmDelete('{{ s.name }}', '/students/delete/{{ s.name }}/')"
+            style="background:var(--danger-lt);border:1px solid #fecaca;
+                   color:var(--danger);cursor:pointer;padding:6px 14px;border-radius:7px;
+                   font-size:12.5px;font-family:var(--sans);font-weight:600;
+                   transition:all .15s;display:inline-flex;align-items:center;gap:6px"
+            onmouseover="this.style.background='#fee2e2';this.style.borderColor='#fca5a5'"
+            onmouseout="this.style.background='var(--danger-lt)';this.style.borderColor='#fecaca'"
+            title="Remove student">
+            <i class="fas fa-trash-alt"></i> Remove
+          </button>
+        </td>
+      </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+
+  {% else %}
+  <div style="padding:70px;text-align:center;color:var(--muted)">
+    <div style="width:64px;height:64px;border-radius:18px;background:var(--surface2);
+                border:1.5px dashed var(--border2);display:flex;align-items:center;
+                justify-content:center;margin:0 auto 16px">
+      <i class="fas fa-user-slash" style="font-size:24px;color:var(--muted2)"></i>
+    </div>
+    <p style="font-size:15px;font-weight:700;color:var(--text);margin-bottom:6px">No students yet</p>
+    <p style="font-size:13px;color:var(--muted);margin-bottom:22px">Register students or drop photos into the dataset folder</p>
+    <a href="/" class="btn btn-primary"><i class="fas fa-plus"></i> Register First Student</a>
+  </div>
+  {% endif %}
+</div>
+
+<script>
+  document.getElementById('searchInput').addEventListener('keyup', function() {
+    const filter = this.value.toUpperCase();
+    document.querySelectorAll('#studentTable tbody tr').forEach(row => {
+      row.style.display = (row.cells[1]?.textContent || '').toUpperCase().includes(filter) ? '' : 'none';
+    });
+  });
+</script>
+
+{% endblock %}

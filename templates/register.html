@@ -1,0 +1,193 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>EduVision · Register</title>
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <style>
+    :root{--primary:#6366f1;--primary-lt:#eef2ff;--primary-dark:#4f46e5;--success:#10b981;--danger:#ef4444;--danger-lt:#fef2f2;--warning:#f59e0b;--warning-lt:#fffbeb;--bg:#f0f4f8;--surface:#fff;--surface2:#f8fafc;--border:#e2e8f0;--text:#0f172a;--muted:#64748b;--muted2:#94a3b8;--mono:'JetBrains Mono',monospace;--sans:'Plus Jakarta Sans',sans-serif}
+    *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+    body{font-family:var(--sans);background:var(--bg);color:var(--text);min-height:100vh;display:flex;align-items:center;justify-content:center;padding:24px;-webkit-font-smoothing:antialiased}
+    .wrap{width:100%;max-width:880px;display:grid;grid-template-columns:1fr 1.1fr;gap:32px;align-items:start;animation:up .45s cubic-bezier(.34,1,.64,1) both}
+    @keyframes up{from{opacity:0;transform:translateY(16px)}to{opacity:1;transform:none}}
+    .left{display:flex;flex-direction:column;gap:22px}
+    .brand{display:flex;align-items:center;gap:12px}
+    .logo{width:44px;height:44px;background:linear-gradient(135deg,var(--primary),#818cf8);border-radius:12px;display:flex;align-items:center;justify-content:center;font-size:20px;color:#fff;box-shadow:0 4px 14px rgba(99,102,241,.4);flex-shrink:0}
+    .brand-name{font-size:1.3rem;font-weight:800;color:var(--text)}
+    .brand-tag{font-family:var(--mono);font-size:9px;color:var(--muted2);letter-spacing:1.5px;text-transform:uppercase;margin-top:2px}
+    .info{background:var(--surface);border:1px solid var(--border);border-radius:16px;padding:22px 24px;box-shadow:0 2px 12px rgba(0,0,0,.05)}
+    .info-ttl{font-size:11px;font-weight:700;color:var(--muted);text-transform:uppercase;letter-spacing:1px;font-family:var(--mono);margin-bottom:16px;display:flex;align-items:center;gap:8px}
+    .info-ttl i{color:var(--primary)}
+    .step{display:flex;gap:12px;align-items:flex-start;margin-bottom:14px}
+    .step:last-child{margin-bottom:0}
+    .snum{width:24px;height:24px;border-radius:7px;background:var(--primary-lt);color:var(--primary);display:flex;align-items:center;justify-content:center;font-family:var(--mono);font-size:11px;font-weight:700;flex-shrink:0;margin-top:1px}
+    .stxt{font-size:13px;color:var(--muted);line-height:1.55;padding-top:2px}
+    .stxt strong{color:var(--text);font-weight:600}
+    .card{background:var(--surface);border:1px solid var(--border);border-radius:18px;padding:32px;box-shadow:0 4px 24px rgba(0,0,0,.07),0 1px 4px rgba(0,0,0,.04)}
+    h2{font-size:1.3rem;font-weight:800;margin-bottom:4px}
+    .sub{font-size:13px;color:var(--muted);margin-bottom:26px}
+    label.lbl{display:block;font-size:11.5px;font-weight:600;color:var(--muted);text-transform:uppercase;letter-spacing:.5px;margin-bottom:5px}
+    input[type=text],input[type=password],input[type=number]{width:100%;padding:11px 14px;border:1.5px solid var(--border);border-radius:9px;font-size:14px;font-family:var(--sans);font-weight:500;color:var(--text);background:var(--surface2);outline:none;margin-bottom:4px;transition:border-color .18s,box-shadow .18s}
+    input:focus{border-color:var(--primary);background:#fff;box-shadow:0 0 0 3px rgba(99,102,241,.1)}
+    ::placeholder{color:var(--muted2);font-weight:400}
+    .field-err{font-size:12px;color:var(--danger);margin-bottom:12px;display:flex;align-items:center;gap:6px}
+    .field-err i{font-size:10px}
+    .mb{margin-bottom:16px}
+    .role-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:20px}
+    .role-opt{position:relative}
+    .role-opt input[type=radio]{position:absolute;opacity:0;width:0;height:0}
+    .role-opt label{display:flex;flex-direction:column;align-items:center;justify-content:center;gap:6px;padding:14px 10px;border:1.5px solid var(--border);border-radius:11px;cursor:pointer;transition:all .18s;text-align:center}
+    .role-opt label i{font-size:20px;color:var(--muted2);transition:color .18s}
+    .role-opt label .rl{font-size:13px;font-weight:700;color:var(--text)}
+    .role-opt label .rs{font-size:11px;color:var(--muted);margin-top:1px}
+    .role-opt input:checked + label{border-color:var(--primary);background:var(--primary-lt);box-shadow:0 0 0 3px rgba(99,102,241,.12)}
+    .role-opt input:checked + label i{color:var(--primary)}
+    .role-opt label:hover{border-color:var(--primary);background:var(--primary-lt)}
+    .notice{display:flex;gap:10px;align-items:flex-start;background:var(--warning-lt);border:1px solid #fde68a;border-radius:9px;padding:12px 14px;margin-bottom:20px;font-size:12.5px;color:#92400e;line-height:1.55}
+    .notice i{flex-shrink:0;margin-top:1px}
+    .hidden{display:none}
+    .btn{width:100%;padding:12px;background:var(--primary);color:#fff;border:none;border-radius:9px;font-size:14px;font-weight:700;font-family:var(--sans);cursor:pointer;transition:background .18s,transform .18s,box-shadow .18s;display:flex;align-items:center;justify-content:center;gap:8px}
+    .btn:hover{background:var(--primary-dark);transform:translateY(-1px);box-shadow:0 4px 12px rgba(99,102,241,.35)}
+    .foot{text-align:center;font-size:13px;color:var(--muted);margin-top:18px}
+    .foot a{color:var(--primary);font-weight:600;text-decoration:none}
+    .foot a:hover{text-decoration:underline}
+    .spinner{display:inline-block;width:14px;height:14px;border:2px solid rgba(255,255,255,.4);border-top-color:#fff;border-radius:50%;animation:spin .6s linear infinite}
+    @keyframes spin{to{transform:rotate(360deg)}}
+    @media(max-width:640px){.wrap{grid-template-columns:1fr;max-width:440px}.left{order:2}}
+  </style>
+</head>
+<body>
+<div class="wrap">
+
+  <!-- LEFT: brand + how it works -->
+  <div class="left">
+    <div class="brand">
+      <div class="logo"><i class="fas fa-eye"></i></div>
+      <div>
+        <div class="brand-name">EduVision</div>
+        <div class="brand-tag">AI · Intelligence System</div>
+      </div>
+    </div>
+
+    <div class="info">
+      <div class="info-ttl"><i class="fas fa-info-circle"></i> How it works</div>
+      <div class="step">
+        <div class="snum">1</div>
+        <div class="stxt">Enter your <strong>name</strong>, <strong>password</strong>, and choose your role.</div>
+      </div>
+      <div class="step">
+        <div class="snum">2</div>
+        <div class="stxt" id="step2">
+          <strong>Student</strong> — a camera window opens on the server and captures your face photos automatically.
+        </div>
+      </div>
+      <div class="step">
+        <div class="snum">3</div>
+        <div class="stxt" id="step3">
+          Your photos are saved and used by the <strong>LBPH model</strong> to mark attendance automatically.
+        </div>
+      </div>
+      <div class="step">
+        <div class="snum">4</div>
+        <div class="stxt">You'll be redirected to <strong>login</strong> once done. Students can re-capture from their dashboard.</div>
+      </div>
+    </div>
+
+    <p style="font-family:var(--mono);font-size:10px;color:var(--muted2);text-align:center">EduVision · YOLOv8 + LBPH</p>
+  </div>
+
+  <!-- RIGHT: form -->
+  <div class="card">
+    <h2>Create Account</h2>
+    <p class="sub">Register as a student or teacher</p>
+
+    <form method="POST" id="regForm">
+      {% csrf_token %}
+
+      <!-- Name -->
+      <label class="lbl">Full Name</label>
+      <input type="text" name="name" placeholder="e.g. Anju Kumawat" required autocomplete="off"
+             value="{% if post %}{{ post.name }}{% endif %}">
+      {% if errors.name %}
+      <div class="field-err"><i class="fas fa-exclamation-circle"></i> {{ errors.name }}</div>
+      {% else %}
+      <div class="mb"></div>
+      {% endif %}
+
+      <!-- Password -->
+      <label class="lbl">Password</label>
+      <input type="password" name="password" placeholder="Choose a password (min 4 chars)" required autocomplete="new-password">
+      {% if errors.password %}
+      <div class="field-err"><i class="fas fa-exclamation-circle"></i> {{ errors.password }}</div>
+      {% else %}
+      <div class="mb"></div>
+      {% endif %}
+
+      <!-- Role -->
+      <label class="lbl" style="margin-bottom:8px">Role</label>
+      <div class="role-grid">
+        <div class="role-opt">
+          <input type="radio" name="role" id="r_student" value="student" checked>
+          <label for="r_student">
+            <i class="fas fa-user-graduate"></i>
+            <span class="rl">Student</span>
+            <span class="rs">Face capture + attendance</span>
+          </label>
+        </div>
+        <div class="role-opt">
+          <input type="radio" name="role" id="r_teacher" value="teacher">
+          <label for="r_teacher">
+            <i class="fas fa-chalkboard-teacher"></i>
+            <span class="rl">Teacher</span>
+            <span class="rs">Manage class &amp; monitor</span>
+          </label>
+        </div>
+      </div>
+
+
+      <button type="submit" class="btn" id="subBtn">
+        <i class="fas fa-user-plus"></i>
+        <span id="subTxt">Register </span>
+      </button>
+    </form>
+
+    <p class="foot">Already have an account? <a href="/login/">Sign in</a></p>
+  </div>
+</div>
+
+<script>
+  const sR = document.getElementById('r_student');
+  const tR = document.getElementById('r_teacher');
+  const pr = document.getElementById('photoRow');
+  const cn = document.getElementById('camNotice');
+  const st = document.getElementById('subTxt');
+  const s2 = document.getElementById('step2');
+  const s3 = document.getElementById('step3');
+
+  function toggle() {
+    const teacher = tR.checked;
+    pr.classList.toggle('hidden', teacher);
+    cn.classList.toggle('hidden', teacher);
+    st.textContent = teacher ? 'Create Teacher Account' : 'Register & Capture';
+    if (teacher) {
+      s2.innerHTML = '<strong>Teacher</strong> — no face capture needed. Your account is created instantly.';
+      s3.innerHTML = 'Log in to access the <strong>teacher dashboard</strong>: register students, run attendance scans, and monitor behavior.';
+    } else {
+      s2.innerHTML = '<strong>Student</strong> — a camera window opens on the server and captures your face photos automatically.';
+      s3.innerHTML = 'Your photos are saved and used by the <strong>LBPH model</strong> to mark attendance automatically.';
+    }
+  }
+
+  sR.addEventListener('change', toggle);
+  tR.addEventListener('change', toggle);
+
+  document.getElementById('regForm').addEventListener('submit', function() {
+    const b = document.getElementById('subBtn');
+    b.disabled = true;
+    b.innerHTML = '<span class="spinner"></span> Creating account…';
+  });
+</script>
+</body>
+</html>
