@@ -165,54 +165,6 @@ EduVision/
 └── README.md                  # This file
 ```
 
----
-
-## 🎮 Usage Guide
-
-### For Students
-
-#### 1. **Capture Face Photos**
-1. Log in to student dashboard
-2. Click **"Capture My Face"** button
-3. Position face in camera frame
-4. System captures 20 photos automatically
-5. Photos saved to your gallery
-
-#### 2. **Train Recognition Model**
-1. Go to **"My Photos"** to verify you have enough photos
-2. Click **"Train Model"** button on dashboard
-3. Model training in progress (~10-30 seconds)
-4. Success message when complete
-
-#### 3. **View Attendance**
-1. Check attendance stats on dashboard
-2. View recent attendance records
-3. Monitor personal attendance percentage
-
-### For Teachers
-
-#### 1. **Mark Attendance**
-1. Click **"Mark Attendance"** button
-2. Students appear in camera frame
-3. Auto-marked when face recognized
-4. Manual adjustments possible
-5. Export to Excel when done
-
-#### 2. **Monitor Behavior**
-1. Go to **Behavior** page
-2. Click **"Start Monitoring"** button
-3. Select monitoring duration (default: 60 seconds)
-4. Camera window opens with overlay
-5. View real-time:
-   - Student names with confidence
-   - Behavior classification (attentive/distracted/phone)
-   - Count of detected students
-   - Timer countdown
-
-#### 3. **Review Behavior Logs**
-1. Check behavior alerts on dashboard
-2. View detailed session logs
-3. Identify patterns and trends
 
 ---
 
@@ -261,68 +213,6 @@ Inference Phase:
 
 ---
 
-## ⚙️ Configuration
-
-### Face Recognition Settings
-Edit in `scan_behavior.py`:
-```python
-RECOGNITION_CONFIDENCE_THRESHOLD = 85  # Lower = stricter matching
-```
-
-### Head Pose Detection Settings
-Edit in `scan_behavior.py`:
-```python
-YAW_THRESHOLD = 0.35      # Left/right rotation (0-1 scale)
-PITCH_THRESHOLD = 0.35    # Up/down tilt (0-1 scale)
-```
-
-### Camera Settings
-Edit in `camera_utils.py`:
-```python
-CAM_WIDTH = 960           # Camera resolution width
-CAM_HEIGHT = 720          # Camera resolution height
-WINDOW_WIDTH = 1100       # Display window width
-WINDOW_HEIGHT = 750       # Display window height
-```
-
-### Behavior Monitoring Duration
-Default: 60 seconds  
-Override via command line:
-```bash
-python scan_behavior.py 120  # Monitor for 120 seconds
-```
-
----
-
-## 🐛 Known Issues & Solutions
-
-### Issue #1: Photos Not Visible in Gallery
-**Solution**: Ensure photos are saved to `/dataset/{username}/`
-- Check: `capture_faces.py` uses absolute paths
-- Verify: Files exist in correct directory
-
-### Issue #2: Browser Caching Old Photos
-**Solution**: Cache-busting with timestamps
-- Templates include `?t={{ now|date:'U' }}` in image URLs
-- Clear browser cache if needed
-
-### Issue #3: Camera Window Not Displaying
-**Solution**: macOS-specific OpenCV fix
-- Uses TkAgg matplotlib backend
-- Check: `macos_display_helper.py` is imported
-
-### Issue #4: Face Recognition Model Not Found
-**Solution**: Train model first
-- Click "Train Model" button before behavior monitoring
-- Requires minimum 20 photos per student
-
-### Issue #5: YOLO Model Loading Slow
-**Solution**: Normal behavior
-- First run: 15-30 seconds (model downloads)
-- Subsequent runs: <1 second (cached)
-
----
-
 ## 📊 Performance Metrics
 
 | Component | Time | Notes |
@@ -367,33 +257,6 @@ See `requirements.txt` for complete list.
 
 ---
 
-## 🚀 Deployment
-
-### Using Gunicorn
-```bash
-pip install gunicorn
-gunicorn core.wsgi --bind 0.0.0.0:8000 --workers 4
-```
-
-### Using Docker (Optional)
-Create `Dockerfile`:
-```dockerfile
-FROM python:3.9
-WORKDIR /app
-COPY requirements.txt .
-RUN pip install -r requirements.txt
-COPY . .
-CMD ["python", "manage.py", "runserver", "0.0.0.0:8000"]
-```
-
-Build and run:
-```bash
-docker build -t eduvision .
-docker run -p 8000:8000 eduvision
-```
-
----
-
 ## 📖 Documentation
 
 For detailed technical documentation, see:
@@ -421,51 +284,3 @@ This project is licensed under the MIT License - see LICENSE file for details.
 
 ---
 
-## 👨‍💼 Author
-
-**Anju Kumawat**  
-GitHub: [@anjukumawat29](https://github.com/anjukumawat29)
-
----
-
-## 🙏 Acknowledgments
-
-- **YOLOv8** (Ultralytics) - Object detection
-- **MediaPipe** (Google) - Pose estimation
-- **OpenCV** - Computer vision library
-- **Django** - Web framework
-
----
-
-## 📞 Support
-
-For issues, questions, or feedback:
-1. Check existing GitHub Issues
-2. Review `SYSTEM_DOCUMENTATION.md`
-3. Open new GitHub Issue with details
-
----
-
-## 🎯 Roadmap
-
-### Planned Features
-- [ ] Real-time SMS/Email alerts for unusual behavior
-- [ ] Student engagement analytics dashboard
-- [ ] Parent portal to view child's attendance
-- [ ] ML model accuracy metrics and improvements
-- [ ] Multi-camera support for large classrooms
-- [ ] Mobile app for students
-- [ ] Voice alerts during behavior monitoring
-- [ ] Integration with school management system
-
-### Performance Improvements
-- [ ] Model compression for faster inference
-- [ ] GPU acceleration support
-- [ ] Redis caching for attendance queries
-- [ ] Async task processing with Celery
-
----
-
-**Last Updated**: April 3, 2026  
-**Version**: 1.0.0  
-**Status**: Production Ready ✅
