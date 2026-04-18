@@ -65,8 +65,8 @@ cv2.resizeWindow("Attendance Scan", 1200, 800)
 
 print("[scan] Camera started")
 
-# warmup
-for _ in range(20):
+# Quick warmup — 5 frames is enough for macOS AVFoundation
+for _ in range(5):
     cap.read()
 
 # ── Scan loop ────────────────────────

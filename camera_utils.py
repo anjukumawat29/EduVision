@@ -18,8 +18,8 @@ def setup_camera(cam_index=0):
     cam.set(cv2.CAP_PROP_FRAME_WIDTH, CAM_WIDTH)
     cam.set(cv2.CAP_PROP_FRAME_HEIGHT, CAM_HEIGHT)
 
-    # warmup
-    for _ in range(30):
+    # Quick warmup — 5 frames is enough for macOS AVFoundation
+    for _ in range(5):
         cam.read()
 
     return cam

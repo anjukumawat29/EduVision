@@ -80,7 +80,7 @@
       <div class="step">
         <div class="snum">2</div>
         <div class="stxt" id="step2">
-          <strong>Student</strong> — a camera window opens on the server and captures your face photos automatically.
+          <strong>Student</strong> &mdash; after signing in, click <strong>Capture My Face</strong> on your dashboard to register your face.
         </div>
       </div>
       <div class="step">
@@ -91,7 +91,7 @@
       </div>
       <div class="step">
         <div class="snum">4</div>
-        <div class="stxt">You'll be redirected to <strong>login</strong> once done. Students can re-capture from their dashboard.</div>
+        <div class="stxt">You'll be redirected to <strong>login</strong> once done. Students can re-capture photos anytime from their dashboard.</div>
       </div>
     </div>
 
@@ -160,22 +160,18 @@
 <script>
   const sR = document.getElementById('r_student');
   const tR = document.getElementById('r_teacher');
-  const pr = document.getElementById('photoRow');
-  const cn = document.getElementById('camNotice');
   const st = document.getElementById('subTxt');
   const s2 = document.getElementById('step2');
   const s3 = document.getElementById('step3');
 
   function toggle() {
     const teacher = tR.checked;
-    pr.classList.toggle('hidden', teacher);
-    cn.classList.toggle('hidden', teacher);
-    st.textContent = teacher ? 'Create Teacher Account' : 'Register & Capture';
+    st.textContent = teacher ? 'Create Teacher Account' : 'Create Account';
     if (teacher) {
-      s2.innerHTML = '<strong>Teacher</strong> — no face capture needed. Your account is created instantly.';
-      s3.innerHTML = 'Log in to access the <strong>teacher dashboard</strong>: register students, run attendance scans, and monitor behavior.';
+      s2.innerHTML = '<strong>Teacher</strong> &mdash; no face capture needed. Your account is created instantly.';
+      s3.innerHTML = 'Log in to access the <strong>teacher dashboard</strong>: view students, run attendance scans, and monitor behavior.';
     } else {
-      s2.innerHTML = '<strong>Student</strong> — a camera window opens on the server and captures your face photos automatically.';
+      s2.innerHTML = '<strong>Student</strong> &mdash; after signing in, click <strong>Capture My Face</strong> on your dashboard to register your face.';
       s3.innerHTML = 'Your photos are saved and used by the <strong>LBPH model</strong> to mark attendance automatically.';
     }
   }

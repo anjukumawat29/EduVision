@@ -23,13 +23,13 @@ cap = cv2.VideoCapture(0, cv2.CAP_AVFOUNDATION)
 if not cap.isOpened():
     cap = cv2.VideoCapture(0)
 
-cap.set(3, 1280)
-cap.set(4, 720)
+cap.set(3, 640)
+cap.set(4, 480)
 
 print(f"[capture] Registering: {name}")
 
-# warmup
-for _ in range(20):
+# Quick warmup — just 5 frames instead of 20
+for _ in range(5):
     cap.read()
 
 saved = 0

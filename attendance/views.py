@@ -38,7 +38,8 @@ def open_camera():
         cam = cv2.VideoCapture(0)
     cam.set(cv2.CAP_PROP_FRAME_WIDTH,  640)
     cam.set(cv2.CAP_PROP_FRAME_HEIGHT, 480)
-    for _ in range(35):
+    # Quick warmup — 5 frames is enough for macOS AVFoundation
+    for _ in range(5):
         cam.read()
     return cam
 
@@ -185,42 +186,68 @@ def read_recent_excel(n=10):
 # ════════════════════════════════════════════════════════════════════
 
 def home(request):
-    """Dashboard with behavior insights only."""
-    
-    # Get behavior alerts from session
+    """Teacher dashboard with profile card, today's attendance, and behavior insights."""
+
+    # ── Behavior alerts ───────────────────────────────────────────────
     behavior_alerts = []
     if "behavior_log" in request.session:
         log = request.session.get("behavior_log", {})
-        using_phone = log.get("using_phone", 0)
-        distracted = log.get("distracted", 0)
-        total = log.get("total", 0)
-        
-        # Create alerts if concerning behaviors detected
+        using_phone   = log.get("using_phone", 0)
+        distracted    = log.get("distracted", 0)
+        total         = log.get("total", 0)
         if total > 0:
-            phone_pct = (using_phone / total) * 100
-            distracted_pct = (distracted / total) * 100
-            
+            phone_pct      = (using_phone / total) * 100
+            distracted_pct = (distracted  / total) * 100
             if phone_pct > 15:
                 behavior_alerts.append({
-                    "type": "phone",
-                    "message": f"High phone usage detected ({phone_pct:.0f}%)",
+                    "type":     "phone",
+                    "message":  f"High phone usage detected ({phone_pct:.0f}%)",
                     "severity": "danger" if phone_pct > 30 else "warning",
-                    "count": using_phone,
+                    "count":    using_phone,
                 })
-            
             if distracted_pct > 25:
                 behavior_alerts.append({
-                    "type": "distracted",
-                    "message": f"Students distracted for {distracted_pct:.0f}% of session",
+                    "type":     "distracted",
+                    "message":  f"Students distracted for {distracted_pct:.0f}% of session",
                     "severity": "warning",
-                    "count": distracted,
+                    "count":    distracted,
                 })
-    
+
+    # ── Today's attendance summary ────────────────────────────────────
+    today_present = []
+    today_absent  = []
+    today_str = datetime.now().strftime("%Y-%m-%d")
+    all_students = get_students()
+
+    if os.path.exists(EXCEL_FILE):
+        try:
+            wb = openpyxl.load_workbook(EXCEL_FILE)
+            ws = wb.active
+            present_today = set()
+            for row in ws.iter_rows(min_row=2, values_only=True):
+                if not any(row):
+                    continue
+                name, date, _time, status = row[0], row[1], row[2], row[3]
+                if str(date) == today_str and status == "Present":
+                    present_today.add(str(name))
+            today_present = sorted(present_today)
+            today_absent  = [s for s in all_students if s not in present_today]
+        except Exception:
+            pass
+
+    # ── Recent scans (last 5 attendance entries) ──────────────────────
+    recent_scans = read_recent_excel(n=5)
+
     return render(request, "home.html", {
-        "student_count": len(get_students()),
-        "model_ready":   os.path.exists(MODEL_FILE),
-        "min_photos":    MIN_PHOTOS,
+        "student_count":   len(all_students),
+        "model_ready":     os.path.exists(MODEL_FILE),
+        "min_photos":      MIN_PHOTOS,
         "behavior_alerts": behavior_alerts,
+        "today_present":   today_present,
+        "today_absent":    today_absent,
+        "today_present_count": len(today_present),
+        "today_absent_count":  len(today_absent),
+        "recent_scans":    recent_scans,
     })
 
 

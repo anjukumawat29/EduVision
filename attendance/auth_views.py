@@ -1,7 +1,6 @@
 import os
 import sys
 import json
-import subprocess
 from functools import wraps
 
 from django.conf import settings
@@ -43,7 +42,6 @@ def register_view(request):
     name     = request.POST.get("name",     "").strip()
     password = request.POST.get("password", "").strip()
     role     = request.POST.get("role",     "student")
-    count    = request.POST.get("count",    "20").strip()
 
     errors = {}
     if not name:
@@ -56,11 +54,6 @@ def register_view(request):
     if errors:
         return render(request, "register.html", {"errors": errors, "post": request.POST})
 
-    try:
-        count = max(10, min(40, int(count)))
-    except ValueError:
-        count = 20
-
     if User.objects.filter(username__iexact=name).exists():
         return render(request, "register.html", {
             "errors": {"name": f"Username '{name}' is already taken."},
@@ -71,16 +64,13 @@ def register_view(request):
     user.userprofile.is_teacher = (role == "teacher")
     user.userprofile.save()
 
+    # NOTE: Camera/face capture is intentionally NOT launched at registration.
+    # Students log in and click "Capture My Face" from their own dashboard.
     if role == "student":
-        script_path = os.path.join(settings.BASE_DIR, "capture_faces.py")
-        if os.path.exists(script_path):
-            try:
-                subprocess.Popen([sys.executable, script_path, name, str(count)])
-            except Exception as e:
-                messages.warning(request,
-                    f"Account created but camera failed: {e}. Retry from your dashboard.")
-
-    messages.success(request, f"Account created for '{name}'. Please sign in.")
+        messages.success(request,
+            f"Account created for '{name}'! Sign in and use 'Capture My Face' on your dashboard to register your face.")
+    else:
+        messages.success(request, f"Teacher account created for '{name}'. Please sign in.")
     return redirect("login")
 
 
